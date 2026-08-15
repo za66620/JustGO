@@ -1,0 +1,365 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/infinite_background.gd" id="2_bg"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="3_player"]
+[ext_resource type="Script" path="res://scripts/virtual_joystick.gd" id="4_stick"]
+
+[sub_resource type="StyleBoxFlat" id="StylePanel"]
+bg_color = Color(0.035, 0.047, 0.09, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.85, 0.8, 0.32)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="BarBackground"]
+bg_color = Color(0.02, 0.027, 0.055, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.28, 0.42, 0.48)
+
+[sub_resource type="StyleBoxFlat" id="HealthFill"]
+bg_color = Color(0.85, 0.22, 0.34, 1)
+
+[sub_resource type="StyleBoxFlat" id="XPFill"]
+bg_color = Color(0.16, 0.78, 0.74, 1)
+
+[sub_resource type="StyleBoxFlat" id="ShieldFill"]
+bg_color = Color(0.38, 0.46, 0.92, 1)
+
+[sub_resource type="StyleBoxFlat" id="UpgradePanel"]
+bg_color = Color(0.035, 0.047, 0.09, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.27, 0.83, 0.79, 0.55)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="CardNormal"]
+bg_color = Color(0.075, 0.1, 0.17, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.26, 0.43, 0.59, 0.9)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 18.0
+content_margin_top = 18.0
+content_margin_right = 18.0
+content_margin_bottom = 18.0
+
+[sub_resource type="StyleBoxFlat" id="CardHover"]
+bg_color = Color(0.095, 0.14, 0.22, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.24, 0.9, 0.82, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 18.0
+content_margin_top = 18.0
+content_margin_right = 18.0
+content_margin_bottom = 18.0
+
+[sub_resource type="StyleBoxFlat" id="CardPressed"]
+bg_color = Color(0.12, 0.19, 0.27, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.96, 0.72, 0.3, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 18.0
+content_margin_top = 18.0
+content_margin_right = 18.0
+content_margin_bottom = 18.0
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="InfiniteBackground" type="Node2D" parent="."]
+z_index = -10
+script = ExtResource("2_bg")
+
+[node name="Entities" type="Node2D" parent="."]
+
+[node name="Enemies" type="Node2D" parent="Entities"]
+
+[node name="Projectiles" type="Node2D" parent="Entities"]
+
+[node name="Pickups" type="Node2D" parent="Entities"]
+
+[node name="Effects" type="Node2D" parent="Entities"]
+
+[node name="Player" type="CharacterBody2D" parent="Entities"]
+z_index = 5
+script = ExtResource("3_player")
+
+[node name="Camera2D" type="Camera2D" parent="Entities/Player"]
+position_smoothing_enabled = false
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="PanelContainer" parent="UI"]
+offset_left = 22.0
+offset_top = 20.0
+offset_right = 390.0
+offset_bottom = 218.0
+theme_override_styles/panel = SubResource("StylePanel")
+
+[node name="Margin" type="MarginContainer" parent="UI/HUD"]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="UI/HUD/Margin"]
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="UI/HUD/Margin/VBox"]
+text = "夜幕拾荒者"
+theme_override_colors/font_color = Color(0.96, 0.77, 0.35, 1)
+theme_override_font_sizes/font_size = 18
+
+[node name="Stats" type="Label" parent="UI/HUD/Margin/VBox"]
+text = "等级 01    击破 0"
+theme_override_colors/font_color = Color(0.84, 0.9, 0.95, 1)
+theme_override_font_sizes/font_size = 16
+
+[node name="HealthText" type="Label" parent="UI/HUD/Margin/VBox"]
+text = "生命  50 / 50"
+theme_override_colors/font_color = Color(0.95, 0.72, 0.76, 1)
+theme_override_font_sizes/font_size = 13
+
+[node name="HealthBar" type="ProgressBar" parent="UI/HUD/Margin/VBox"]
+custom_minimum_size = Vector2(0, 9)
+layout_mode = 2
+value = 50.0
+show_percentage = false
+theme_override_styles/background = SubResource("BarBackground")
+theme_override_styles/fill = SubResource("HealthFill")
+
+[node name="XPText" type="Label" parent="UI/HUD/Margin/VBox"]
+text = "经验  0 / 20"
+theme_override_colors/font_color = Color(0.65, 0.94, 0.91, 1)
+theme_override_font_sizes/font_size = 13
+
+[node name="XPBar" type="ProgressBar" parent="UI/HUD/Margin/VBox"]
+custom_minimum_size = Vector2(0, 9)
+layout_mode = 2
+show_percentage = false
+theme_override_styles/background = SubResource("BarBackground")
+theme_override_styles/fill = SubResource("XPFill")
+
+[node name="ShieldText" type="Label" parent="UI/HUD/Margin/VBox"]
+text = "护盾  0 / 0"
+theme_override_colors/font_color = Color(0.7, 0.75, 1, 1)
+theme_override_font_sizes/font_size = 13
+
+[node name="ShieldBar" type="ProgressBar" parent="UI/HUD/Margin/VBox"]
+custom_minimum_size = Vector2(0, 9)
+layout_mode = 2
+show_percentage = false
+theme_override_styles/background = SubResource("BarBackground")
+theme_override_styles/fill = SubResource("ShieldFill")
+
+[node name="Timer" type="Label" parent="UI"]
+anchors_preset = 10
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -120.0
+offset_top = 22.0
+offset_right = 120.0
+offset_bottom = 62.0
+grow_horizontal = 2
+text = "00:00"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.96, 0.82, 0.55, 1)
+theme_override_font_sizes/font_size = 28
+
+[node name="BuildPanel" type="PanelContainer" parent="UI"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -246.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 176.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StylePanel")
+
+[node name="Margin" type="MarginContainer" parent="UI/BuildPanel"]
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="UI/BuildPanel/Margin"]
+theme_override_constants/separation = 7
+
+[node name="Title" type="Label" parent="UI/BuildPanel/Margin/VBox"]
+text = "当前武装"
+theme_override_colors/font_color = Color(0.96, 0.77, 0.35, 1)
+theme_override_font_sizes/font_size = 16
+
+[node name="BuildText" type="Label" parent="UI/BuildPanel/Margin/VBox"]
+text = "枪械  Lv.1\n环刃  Lv.0\n火球  Lv.0\n落雷  Lv.0"
+theme_override_colors/font_color = Color(0.75, 0.86, 0.92, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="Hint" type="Label" parent="UI"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -322.0
+offset_top = -52.0
+offset_right = -20.0
+offset_bottom = -18.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "自动瞄准射击  ·  无限地图"
+horizontal_alignment = 2
+theme_override_colors/font_color = Color(0.55, 0.62, 0.74, 1)
+theme_override_font_sizes/font_size = 15
+
+[node name="VirtualJoystick" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 3
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 54.0
+offset_top = -222.0
+offset_right = 244.0
+offset_bottom = -32.0
+grow_vertical = 0
+mouse_filter = 0
+script = ExtResource("4_stick")
+
+[node name="UpgradeOverlay" type="Control" parent="UI"]
+process_mode = 3
+visible = false
+z_index = 100
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Shade" type="ColorRect" parent="UI/UpgradeOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.008, 0.012, 0.035, 0.9)
+
+[node name="Center" type="PanelContainer" parent="UI/UpgradeOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -482.0
+offset_top = -242.0
+offset_right = 482.0
+offset_bottom = 242.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("UpgradePanel")
+
+[node name="Margin" type="MarginContainer" parent="UI/UpgradeOverlay/Center"]
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="UI/UpgradeOverlay/Center/Margin"]
+theme_override_constants/separation = 14
+
+[node name="LevelText" type="Label" parent="UI/UpgradeOverlay/Center/Margin/VBox"]
+text = "LEVEL 02  ·  升级三选一"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.26, 0.9, 0.82, 1)
+theme_override_font_sizes/font_size = 15
+
+[node name="Title" type="Label" parent="UI/UpgradeOverlay/Center/Margin/VBox"]
+text = "选择一项强化"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.98, 0.89, 0.71, 1)
+theme_override_font_sizes/font_size = 30
+
+[node name="Hint" type="Label" parent="UI/UpgradeOverlay/Center/Margin/VBox"]
+text = "武器最高10级；属性强化不限次数"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.55, 0.64, 0.75, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="Choices" type="HBoxContainer" parent="UI/UpgradeOverlay/Center/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 18
+alignment = 1
+
+[node name="Choice1" type="Button" parent="UI/UpgradeOverlay/Center/Margin/VBox/Choices"]
+custom_minimum_size = Vector2(282, 245)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "旧式短铳  Lv.2\n\n武器强化\n伤害与射速提升"
+autowrap_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.94, 0.96, 1)
+theme_override_font_sizes/font_size = 19
+theme_override_styles/normal = SubResource("CardNormal")
+theme_override_styles/hover = SubResource("CardHover")
+theme_override_styles/pressed = SubResource("CardPressed")
+theme_override_styles/focus = SubResource("CardHover")
+
+[node name="Choice2" type="Button" parent="UI/UpgradeOverlay/Center/Margin/VBox/Choices"]
+custom_minimum_size = Vector2(282, 245)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "回响环刃  Lv.1\n\n获得武器\n环绕角色切割怪群"
+autowrap_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.94, 0.96, 1)
+theme_override_font_sizes/font_size = 19
+theme_override_styles/normal = SubResource("CardNormal")
+theme_override_styles/hover = SubResource("CardHover")
+theme_override_styles/pressed = SubResource("CardPressed")
+theme_override_styles/focus = SubResource("CardHover")
+
+[node name="Choice3" type="Button" parent="UI/UpgradeOverlay/Center/Margin/VBox/Choices"]
+custom_minimum_size = Vector2(282, 245)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "护盾电池\n\n护盾上限 +10\n并补充10点护盾"
+autowrap_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.94, 0.96, 1)
+theme_override_font_sizes/font_size = 19
+theme_override_styles/normal = SubResource("CardNormal")
+theme_override_styles/hover = SubResource("CardHover")
+theme_override_styles/pressed = SubResource("CardPressed")
+theme_override_styles/focus = SubResource("CardHover")
