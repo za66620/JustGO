@@ -9,6 +9,9 @@ const WeaponRigScript := preload("res://scripts/player_weapon_rig.gd")
 
 const FRAME_SIZE := Vector2(256.0, 256.0)
 const FRAME_COUNT := 4
+const IDLE_HAND_Y := [-13.0, -14.0, -13.0, -14.0]
+const WALK_HAND_Y := [-11.0, -9.0, -11.0, -9.0]
+const HAND_X := 21.0
 
 @export var move_speed := 220.0
 @export var max_health := 50.0
@@ -19,6 +22,7 @@ var shield := 0.0
 var move_input := Vector2.ZERO
 var facing := Vector2.RIGHT
 var invulnerable_time := 0.0
+var weapon_aim_direction := Vector2.RIGHT
 var visual: AnimatedSprite2D
 var weapon_rig: PlayerWeaponRig
 
@@ -36,8 +40,8 @@ func _ready() -> void:
 
 	weapon_rig = WeaponRigScript.new()
 	weapon_rig.name = "WeaponRig"
-	weapon_rig.position = Vector2(0.0, -8.0)
 	add_child(weapon_rig)
+	_update_weapon_hand_anchor()
 
 func _physics_process(delta: float) -> void:
 	invulnerable_time = maxf(0.0, invulnerable_time - delta)
@@ -56,6 +60,7 @@ func _physics_process(delta: float) -> void:
 		visual.play(next_animation)
 	visual.flip_h = facing.x < -0.08
 	visual.modulate = Color(1.6, 1.6, 1.6, 1.0) if invulnerable_time > 0.0 and int(invulnerable_time * 18.0) % 2 == 0 else Color.WHITE
+	_update_weapon_hand_anchor()
 
 func _build_sprite_frames() -> SpriteFrames:
 	var frames := SpriteFrames.new()
@@ -78,8 +83,20 @@ func _atlas_frame(column: int, row: int) -> AtlasTexture:
 	return frame
 
 func aim_weapon(direction: Vector2) -> void:
+	if direction.length_squared() <= 0.0001:
+		return
+	weapon_aim_direction = direction.normalized()
 	if is_instance_valid(weapon_rig):
-		weapon_rig.aim(direction)
+		_update_weapon_hand_anchor()
+		weapon_rig.aim(weapon_aim_direction)
+
+func _update_weapon_hand_anchor() -> void:
+	if not is_instance_valid(weapon_rig) or not is_instance_valid(visual):
+		return
+	var frame_index := clampi(visual.frame, 0, FRAME_COUNT - 1)
+	var hand_y := WALK_HAND_Y[frame_index] if visual.animation == &"walk" else IDLE_HAND_Y[frame_index]
+	var hand_side := -1.0 if weapon_aim_direction.x < 0.0 else 1.0
+	weapon_rig.position = Vector2(HAND_X * hand_side, hand_y)
 
 func gun_muzzle_position() -> Vector2:
 	if is_instance_valid(weapon_rig):
