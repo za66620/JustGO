@@ -150,9 +150,13 @@ func fire_gun() -> void:
 		return
 	var weapon_level := int(weapon_levels["gun"])
 	var direction := player.global_position.direction_to(target.global_position)
-	player.facing = direction
+	player.aim_weapon(direction)
+	var muzzle_position := player.gun_muzzle_position()
+	direction = muzzle_position.direction_to(target.global_position)
+	player.aim_weapon(direction)
+	muzzle_position = player.gun_muzzle_position()
 	var bullet: NightProjectile = ProjectileScript.new()
-	bullet.global_position = player.global_position + direction * 28.0
+	bullet.global_position = muzzle_position
 	bullet.velocity = direction * (680.0 + weapon_level * 8.0)
 	bullet.configure_gun(10.0 * (1.0 + (weapon_level - 1) * 0.16) * damage_multiplier, weapon_level)
 	projectiles.add_child(bullet)
